@@ -1,4 +1,4 @@
-# Sidekiq::Logging::Json
+# JuanPelota
 
 At [Springest](http://www.springest.com), we use
 [Logstash](http://logstash.net/) to ship all our logs to
@@ -29,7 +29,7 @@ JSON format. This gem contains that logger.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'sidekiq-logging-json'
+gem 'juan_pelota'
 ```
 
 And then execute:
@@ -41,7 +41,7 @@ $ bundle
 Or install it yourself as:
 
 ```bash
-$ gem install sidekiq-logging-json
+$ gem install juan_pelota
 ```
 
 ## Usage
@@ -49,14 +49,14 @@ $ gem install sidekiq-logging-json
 Add this to your Sidekiq configuration:
 
 ```ruby
-require 'sidekiq/logging/json'
+require 'juan_pelota'
 
-Sidekiq.logger.formatter = Sidekiq::Logging::Json::Logger.new
+Sidekiq.logger.formatter = JuanPelota::Logger.new
 ```
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/sidekiq-logging-json/fork )
+1. Fork it ( https://github.com/[my-github-username]/juan_pelota/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
