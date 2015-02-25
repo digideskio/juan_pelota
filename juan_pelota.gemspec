@@ -23,4 +23,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec',                      ["~> 3.1"]
   spec.add_development_dependency 'rspectacular',               ["~> 0.58.0"]
   spec.add_development_dependency 'fuubar',                     ["~> 2.0"]
+  spec.add_development_dependency 'timecop',                    ["~> 0.7.1"]
 end
