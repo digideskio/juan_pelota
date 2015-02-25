@@ -1,63 +1,106 @@
 require 'spec_helper'
 
 module    JuanPelota
-describe  'process_message' do
-  subject do
-    JSON.parse(JuanPelota::Logger.new.call(severity, time, program_name, logentry))
+describe  Logger do
+  it 'takes message as a hash and logs what we want', :time_mock do
+    json = JuanPelota::Logger.new.call('high',
+                                       Time.now.utc,
+                                       'our tests',
+                                       'args'     => 'my_args',
+                                       'class'    => 'my_worker',
+                                       'run_time' => 100,
+                                       'message'  => 'my message',
+                                       'status'   => 'my_status')
+
+    json_data = JSON.parse(json)
+
+    expect(json_data).to include(
+      '@type'      => 'sidekiq',
+      '@timestamp' => '2012-07-26T18:00:00Z',
+      '@status'    => 'my_status',
+      '@severity'  => 'high',
+      '@run_time'  => 100,
+      '@message'   => {
+        'args'     => 'my_args',
+        'class'    => 'my_worker',
+        'run_time' => 100,
+        'message'  => 'my message',
+        'status'   => 'my_status',
+      },
+      '@fields'    => include(
+        'pid'          => be_a(Integer),
+        'tid'          => match(/[a-z0-9]+/),
+        'context'      => nil,
+        'program_name' => 'our tests',
+        'worker'       => 'my_worker',
+        'arguments'    => 'my_args',
+      ),
+    )
   end
 
-  let(:logentry) { 'Some random message' }
-  let(:message) { subject['@message'] }
-  let(:status) { subject['@status'] }
-  let(:run_time) { subject['@run_time'] }
-  let(:severity) { 'INFO' }
-  let(:time) { Time.now }
-  let(:program_name) { 'RSpec' }
+  it 'take message as a string and picks up if its a worker that is being queued',
+     :time_mock do
 
-  it { expect(message).to match(/#{logentry}/) }
-  it { expect(status).to eq(nil) }
-  it { expect(run_time).to eq(nil) }
+    json = JuanPelota::Logger.new.call('high',
+                                       Time.now.utc,
+                                       'our tests',
+                                       'queueing MyWorkerClass')
 
-  context 'start' do
-    let(:logentry) { 'start' }
+    json_data = JSON.parse(json)
 
-    it { expect(message).to match(/#{logentry}/) }
-    it { expect(status).to eq('start') }
-    it { expect(run_time).to eq(nil) }
+    expect(json_data).to include(
+      '@status'  => 'queueing',
+      '@message' => 'queueing MyWorkerClass',
+      '@fields'  => include(
+        'worker'       => 'MyWorkerClass',
+      ),
+    )
   end
 
-  context 'done' do
-    let(:logentry) { 'done: 51.579 sec' }
+  it 'set the status to dead and returns a nil worker if it gets a string without ' \
+     '"queueing" in the message',
+     :time_mock do
 
-    it { expect(message).to match(/#{logentry}/) }
-    it { expect(status).to eq('done') }
-    it { expect(run_time).to eq(51.579) }
+    json = JuanPelota::Logger.new.call('high',
+                                       Time.now.utc,
+                                       'our tests',
+                                       'My Message')
+
+    json_data = JSON.parse(json)
+
+    expect(json_data).to include(
+      '@status'  => 'dead',
+      '@message' => 'My Message',
+      '@fields'  => include(
+        'worker'       => nil,
+      ),
+    )
   end
 
-  context 'exception' do
-    let(:exception_message) { 'This is the message that should be logged.' }
-    let(:logentry) { NoMethodError.new(exception_message) }
+  it 'set the status to "Exception" if the message is one', :time_mock do
+    json = JuanPelota::Logger.new.call('high',
+                                       Time.now.utc,
+                                       'our tests',
+                                       Exception.new)
 
-    it { expect(message).to match(exception_message) }
-    it { expect(status).to eq('exception') }
-    it { expect(run_time).to eq(nil) }
+    json_data = JSON.parse(json)
+
+    expect(json_data).to include(
+      '@status' => 'exception',
+    )
   end
 
-  context 'retry' do
-    let(:logentry) do
-      {
-        'retry'       => true,
-        'queue'       => 'default',
-        'class'       => 'MarkTest',
-        'args'        => ['markie'],
-        'jid'         => '0ca71f2580fdc0ae19a59063',
-        'enqueued_at' => 1_405_957_471.1871092,
-      }
-    end
+  it 'sets the status to retry if retry is passed in as key to the message', :time_mock do
+    json = JuanPelota::Logger.new.call('high',
+                                       Time.now.utc,
+                                       'our tests',
+                                       'retry' => true)
 
-    it { expect(message).to match('MarkTest failed, retrying.') }
-    it { expect(status).to eq('retry') }
-    it { expect(run_time).to eq(nil) }
+    json_data = JSON.parse(json)
+
+    expect(json_data).to include(
+      '@status' => 'retry',
+    )
   end
 end
 end

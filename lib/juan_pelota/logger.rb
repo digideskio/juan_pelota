@@ -4,63 +4,87 @@ require 'json'
 
 module  JuanPelota
 class   Logger < Sidekiq::Logging::Pretty
+  attr_accessor :severity,
+                :timestamp,
+                :program_name,
+                :raw_message
+
   def call(severity, time, program_name, message)
-    tid = Thread.current.object_id.to_s(36)
+    self.severity     = severity
+    self.timestamp    = time.utc.iso8601
+    self.program_name = program_name
+    self.raw_message  = message
 
     {
-      '@timestamp' => time.utc.iso8601,
-      '@fields'    => {
-        pid:          ::Process.pid,
-        tid:          "TID-#{Thread.current.object_id.to_s(36)}",
-        context:      "#{context}",
-        program_name: program_name,
-        worker:       "#{context}".split(' ')[0],
-      },
       '@type'      => 'sidekiq',
-      '@status'    => nil,
-      '@severity'  => severity,
-      '@run_time'  => nil,
-      '@message'   => "#{time.utc.iso8601} " \
-                      "#{::Process.pid} " \
-                      "TID-#{tid}#{context} " \
-                      "#{severity}: " \
-                      "#{message}",
-    }.merge(process_message(severity, time, program_name, message)).to_json + "\n"
+      '@timestamp' => timestamp,
+      '@status'    => status,
+      '@severity'  => severity.downcase,
+      '@run_time'  => run_time,
+      '@message'   => message,
+      '@fields'    => {
+        pid:          self.class.pid,
+        tid:          self.class.tid,
+        context:      context,
+        program_name: program_name,
+        worker:       worker_name,
+        arguments:    arguments,
+      },
+    }.to_json + "\n"
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-  def process_message(severity, time, _program_name, message)
-    return { '@status' => 'exception' } if message.is_a?(Exception)
+  private
 
-    if message.is_a? Hash
-      tid = Thread.current.object_id.to_s(36)
-
-      if message['retry']
-        status = 'retry'
-        msg = "#{message['class']} failed, retrying with args #{message['args']}."
-      else
-        status = 'dead'
-        msg = "#{message['class']} failed with args #{message['args']}, not retrying."
-      end
-      return {
-        '@status'  => status,
-        '@message' => "#{time.utc.iso8601} " \
-                      "#{::Process.pid} " \
-                      "TID-#{tid}" \
-                      "#{context} " \
-                      "#{severity}: " \
-                      "#{msg}",
+  def raw_message
+    if @raw_message.is_a? Hash
+      @raw_message
+    elsif @raw_message.respond_to?(:match) &&
+          @raw_message.match(/^queueing/)
+      {
+        'status' => 'queueing',
+        'class'  => @raw_message.split(' ')[1],
+      }
+    else
+      {
+        'message' => @raw_message,
       }
     end
-
-    result = message.split(' ')
-    status = result[0].match(/^(start|done|fail):?$/) || []
-
-    {
-      '@status'   => status[1],                                   # start or done
-      '@run_time' => status[1] && result[1] && result[1].to_f   # run time in seconds
-    }
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+  def status
+    return 'exception' if message.is_a? Exception
+
+    if raw_message['retry']
+      'retry'
+    elsif raw_message['status']
+      raw_message['status']
+    else
+      'dead'
+    end
+  end
+
+  def message
+    raw_message['message']
+  end
+
+  def arguments
+    raw_message['args']
+  end
+
+  def run_time
+    raw_message['run_time']
+  end
+
+  def worker_name
+    raw_message['class']
+  end
+
+  def self.pid
+    ::Process.pid
+  end
+
+  def self.tid
+    ::Thread.current.object_id.to_s(36)
+  end
 end
 end
