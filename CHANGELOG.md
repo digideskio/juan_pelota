@@ -1,3 +1,14 @@
+Version v0.0.3 - March 4, 2015
+================================================================================
+
+Added
+--------------------------------------------------------------------------------
+  * Rubocop disabler for long methods
+  * check to ignore filtered_workers in the logger
+  * check to skip logging for filetered_workers in the middleware
+  * filtered_arguments to the middleware logger
+  * A configuration file with filtered_arguments + filtered_workers
+
 Version v0.0.2 - February 25, 2015
 ================================================================================
 
