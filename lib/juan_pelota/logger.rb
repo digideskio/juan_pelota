@@ -11,6 +11,7 @@ class   Logger < Sidekiq::Logging::Pretty
                 :program_name,
                 :raw_message
 
+  # rubocop:disable Metrics/AbcSize
   def call(severity, time, program_name, message)
     self.severity     = severity
     self.timestamp    = time.utc.iso8601
@@ -37,6 +38,7 @@ class   Logger < Sidekiq::Logging::Pretty
       },
     }.to_json + "\n"
   end
+  # rubocop:enable Metrics/AbcSize
 
   private
 

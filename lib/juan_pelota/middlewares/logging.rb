@@ -1,7 +1,7 @@
 module  JuanPelota
 module  Middlewares
 class   Logging
-  # rubocop:disable Lint/RescueException, Metrics/AbcSize
+  # rubocop:disable Lint/RescueException, Metrics/AbcSize, Metrics/MethodLength
   def call(worker, job, _queue)
     start = Time.now
 
@@ -40,7 +40,7 @@ class   Logging
 
     raise
   end
-  # rubocop:enable Lint/RescueException, Metrics/AbcSize
+  # rubocop:enable Lint/RescueException, Metrics/AbcSize, Metrics/MethodLength
 
   def elapsed(start)
     (Time.now - start).to_f.round(3)
