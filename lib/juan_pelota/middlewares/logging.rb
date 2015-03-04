@@ -6,29 +6,28 @@ class   Logging
     start = Time.now
 
     unless config.filtered_workers.include? worker.class.name
-    logger.info(
-      'status'   => 'start',
-      'jid'      => job['jid'],
-      'bid'      => job['bid'],
-      'run_time' => nil,
-      'class'    => worker.class.to_s,
-      'args'     => filtered_arguments(job['args']),
-    )
+      logger.info(
+        'status'   => 'start',
+        'jid'      => job['jid'],
+        'bid'      => job['bid'],
+        'run_time' => nil,
+        'class'    => worker.class.to_s,
+        'args'     => filtered_arguments(job['args']),
+      )
     end
 
     yield
 
     unless config.filtered_workers.include? worker.class.name
-    logger.info(
-      'status'   => 'done',
-      'jid'      => job['jid'],
-      'bid'      => job['bid'],
-      'run_time' => elapsed(start),
-      'class'    => worker.class.to_s,
-      'args'     => filtered_arguments(job['args']),
-    )
+      logger.info(
+        'status'   => 'done',
+        'jid'      => job['jid'],
+        'bid'      => job['bid'],
+        'run_time' => elapsed(start),
+        'class'    => worker.class.to_s,
+        'args'     => filtered_arguments(job['args']),
+      )
     end
-
   rescue Exception
     logger.info(
       'status'   => 'fail',
