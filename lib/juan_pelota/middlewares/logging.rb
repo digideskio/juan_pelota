@@ -11,7 +11,7 @@ class   Logging
       'bid'      => job['bid'],
       'run_time' => nil,
       'class'    => worker.class.to_s,
-      'args'     => job['args'],
+      'args'     => filtered_arguments(job['args']),
     )
 
     yield
@@ -22,7 +22,7 @@ class   Logging
       'bid'      => job['bid'],
       'run_time' => elapsed(start),
       'class'    => worker.class.to_s,
-      'args'     => job['args'],
+      'args'     => filtered_arguments(job['args']),
     )
   rescue Exception
     logger.info(
@@ -31,7 +31,7 @@ class   Logging
       'bid'      => job['bid'],
       'run_time' => elapsed(start),
       'class'    => worker.class.to_s,
-      'args'     => job['args'],
+      'args'     => filtered_arguments(job['args']),
     )
 
     raise
@@ -44,6 +44,21 @@ class   Logging
 
   def logger
     Sidekiq.logger
+  end
+
+  def filtered_arguments(args)
+    return unless args
+
+    @filtered_arguments ||=
+      args.each_with_object({}) do | (key, value), filtered_hash|
+        filtered_hash[key] = value unless config.filtered_arguments.include? key
+      end
+  end
+
+  private
+
+  def config
+    Configuration.instance
   end
 end
 end
