@@ -5,6 +5,7 @@ class   Logging
   def call(worker, job, _queue)
     start = Time.now
 
+    unless config.filtered_workers.include? worker.class.name
     logger.info(
       'status'   => 'start',
       'jid'      => job['jid'],
@@ -13,9 +14,11 @@ class   Logging
       'class'    => worker.class.to_s,
       'args'     => filtered_arguments(job['args']),
     )
+    end
 
     yield
 
+    unless config.filtered_workers.include? worker.class.name
     logger.info(
       'status'   => 'done',
       'jid'      => job['jid'],
@@ -24,6 +27,8 @@ class   Logging
       'class'    => worker.class.to_s,
       'args'     => filtered_arguments(job['args']),
     )
+    end
+
   rescue Exception
     logger.info(
       'status'   => 'fail',
