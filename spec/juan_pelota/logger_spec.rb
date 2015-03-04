@@ -2,6 +2,11 @@ require 'spec_helper'
 
 module    JuanPelota
 describe  Logger do
+
+  before(:each) do
+    Configuration.instance.filtered_workers = 'my_filtered_worker'
+  end
+
   it 'takes message as a hash and logs what we want', :time_mock do
     json = JuanPelota::Logger.new.call('high',
                                        Time.now.utc,

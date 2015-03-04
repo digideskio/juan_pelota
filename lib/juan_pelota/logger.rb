@@ -4,6 +4,8 @@ require 'json'
 
 module  JuanPelota
 class   Logger < Sidekiq::Logging::Pretty
+  IGNORABLE_STATUSES = %w{start done queueing}
+
   attr_accessor :severity,
                 :timestamp,
                 :program_name,
@@ -14,6 +16,9 @@ class   Logger < Sidekiq::Logging::Pretty
     self.timestamp    = time.utc.iso8601
     self.program_name = program_name
     self.raw_message  = message
+
+    return if config.filtered_workers.include?(worker_name.to_s) &&
+              IGNORABLE_STATUSES.include?(status)
 
     {
       '@type'      => 'sidekiq',
@@ -85,6 +90,10 @@ class   Logger < Sidekiq::Logging::Pretty
 
   def self.tid
     ::Thread.current.object_id.to_s(36)
+  end
+
+  def config
+    Configuration.instance
   end
 end
 end
