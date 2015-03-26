@@ -5,3 +5,7 @@ inherit_from:
 
 Style/IndentationWidth:
   Enabled: false
+
+Style/EmptyLinesAroundBlockBody:
+  Exclude:
+    - 'spec/**/*.rb'
