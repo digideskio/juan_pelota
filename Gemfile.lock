@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    juan_pelota (0.0.4)
+    juan_pelota (1.0.0)
       sidekiq (~> 3.0)
 
 GEM
