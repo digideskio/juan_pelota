@@ -51,10 +51,10 @@ class   Logging
   end
 
   def filtered_arguments(args)
-    return unless args
+    return if args.nil? || args.empty?
 
     @filtered_arguments ||=
-      args.each_with_object({}) do |(key, value), filtered_hash|
+      args.first.each_with_object({}) do |(key, value), filtered_hash|
         filtered_hash[key] = value unless config.filtered_arguments.include? key
       end
   end
