@@ -12,11 +12,11 @@ class   Logger < Sidekiq::Logging::Pretty
                 :raw_message
 
   # rubocop:disable Metrics/AbcSize
-  def call(severity, time, program_name, message)
+  def call(severity, time, program_name, incoming_message)
     self.severity     = severity
     self.timestamp    = time.utc.iso8601
     self.program_name = program_name
-    self.raw_message  = message
+    self.raw_message  = incoming_message
 
     return if config.filtered_workers.include?(worker_name.to_s) &&
               IGNORABLE_STATUSES.include?(status)
@@ -48,8 +48,9 @@ class   Logger < Sidekiq::Logging::Pretty
     elsif @raw_message.respond_to?(:match) &&
           @raw_message.match(/^queueing/)
       {
-        'status' => 'queueing',
-        'class'  => @raw_message.split(' ')[1],
+        'status'  => 'queueing',
+        'message' => @raw_message,
+        'class'   => @raw_message.split(' ')[1],
       }
     else
       {

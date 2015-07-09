@@ -25,13 +25,7 @@ describe  Logger do
       '@status'    => 'my_status',
       '@severity'  => 'high',
       '@run_time'  => 100,
-      '@message'   => {
-        'args'     => 'my_args',
-        'class'    => 'my_worker',
-        'run_time' => 100,
-        'message'  => 'my message',
-        'status'   => 'my_status',
-      },
+      '@message'   => 'my message',
       '@fields'    => include(
         'pid'          => be_a(Integer),
         'tid'          => match(/[a-z0-9]+/),
