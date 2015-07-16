@@ -62,6 +62,8 @@ class   Logging
 
     @filtered_arguments ||=
       args.first.each_with_object({}) do |(key, value), filtered_hash|
+        value = filtered_arguments([value]) if value.is_a? Hash
+
         filtered_hash[key] = value unless config.filtered_arguments.include? key
       end
   end
