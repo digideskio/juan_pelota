@@ -56,6 +56,7 @@ describe  Logger do
     )
   end
 
+  # rubocop:disable Metrics/LineLength
   it 'take message as a string and can detect if its a backtrace',
      :time_mock do
 
@@ -101,10 +102,11 @@ describe  Logger do
         "/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/honeybadger-2.0.11/lib/honeybadger/trace.rb:18:in `instrument'",
         "/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/honeybadger-2.0.11/lib/honeybadger/plugins/sidekiq.rb:10:in `call'",
         "/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-3.4.1/lib/sidekiq/middleware/chain.rb:129:in `block in invoke'",
-        "/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-unique-jobs-3.0.14/lib/sidekiq_unique_jobs/middleware/server/unique_jobs.rb:16:in `call'"
+        "/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-unique-jobs-3.0.14/lib/sidekiq_unique_jobs/middleware/server/unique_jobs.rb:16:in `call'",
       ],
     )
   end
+  # rubocop:enable Metrics/LineLength
 
   it 'set the status to dead and returns a nil worker if it gets a string without ' \
      '"queueing" in the message',
