@@ -56,6 +56,56 @@ describe  Logger do
     )
   end
 
+  it 'take message as a string and can detect if its a backtrace',
+     :time_mock do
+
+    backtrace = <<-HEREDOC
+/Users/hhd418/Projects/goodscout/good_products/app/workers/good_products/workers/process_item.rb:50:in `perform'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-3.4.1/lib/sidekiq/processor.rb:75:in `execute_job'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-3.4.1/lib/sidekiq/processor.rb:52:in `block (2 levels) in process'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-3.4.1/lib/sidekiq/middleware/chain.rb:127:in `block in invoke'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/honeybadger-2.0.11/lib/honeybadger/plugins/sidekiq.rb:11:in `block in call'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/honeybadger-2.0.11/lib/honeybadger/trace.rb:62:in `instrument'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/honeybadger-2.0.11/lib/honeybadger/trace.rb:18:in `instrument'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/honeybadger-2.0.11/lib/honeybadger/plugins/sidekiq.rb:10:in `call'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-3.4.1/lib/sidekiq/middleware/chain.rb:129:in `block in invoke'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-unique-jobs-3.0.14/lib/sidekiq_unique_jobs/middleware/server/unique_jobs.rb:16:in `call'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-3.4.1/lib/sidekiq/middleware/chain.rb:129:in `block in invoke'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-3.4.1/lib/sidekiq/middleware/server/active_record.rb:6:in `call'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-3.4.1/lib/sidekiq/middleware/chain.rb:129:in `block in invoke'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-3.4.1/lib/sidekiq/middleware/server/retry_jobs.rb:74:in `call'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-3.4.1/lib/sidekiq/middleware/chain.rb:129:in `block in invoke'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-failures-0.4.4/lib/sidekiq/failures/middleware.rb:9:in `call'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-3.4.1/lib/sidekiq/middleware/chain.rb:129:in `block in invoke'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-3.4.1/lib/sidekiq/middleware/chain.rb:129:in `block in invoke'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-skylight-0.0.4/lib/sidekiq/skylight/server_middleware.rb:8:in `block in call'
+/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/skylight-0.6.0/lib/skylight/core.rb:70:in `trace'
+    HEREDOC
+
+    json = JuanPelota::Logger.new.call('high',
+                                       Time.now.utc,
+                                       'our tests',
+                                       backtrace)
+
+    json_data = JSON.parse(json)
+
+    expect(json_data).to include(
+      '@status'  => 'dead',
+      '@message' => [
+        "/Users/hhd418/Projects/goodscout/good_products/app/workers/good_products/workers/process_item.rb:50:in `perform'",
+        "/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-3.4.1/lib/sidekiq/processor.rb:75:in `execute_job'",
+        "/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-3.4.1/lib/sidekiq/processor.rb:52:in `block (2 levels) in process'",
+        "/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-3.4.1/lib/sidekiq/middleware/chain.rb:127:in `block in invoke'",
+        "/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/honeybadger-2.0.11/lib/honeybadger/plugins/sidekiq.rb:11:in `block in call'",
+        "/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/honeybadger-2.0.11/lib/honeybadger/trace.rb:62:in `instrument'",
+        "/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/honeybadger-2.0.11/lib/honeybadger/trace.rb:18:in `instrument'",
+        "/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/honeybadger-2.0.11/lib/honeybadger/plugins/sidekiq.rb:10:in `call'",
+        "/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-3.4.1/lib/sidekiq/middleware/chain.rb:129:in `block in invoke'",
+        "/usr/local/var/rbenv/versions/2.2.2/lib/ruby/gems/2.2.0/gems/sidekiq-unique-jobs-3.0.14/lib/sidekiq_unique_jobs/middleware/server/unique_jobs.rb:16:in `call'"
+      ],
+    )
+  end
+
   it 'set the status to dead and returns a nil worker if it gets a string without ' \
      '"queueing" in the message',
      :time_mock do

@@ -52,6 +52,11 @@ class   Logger < Sidekiq::Logging::Pretty
         'message' => @raw_message,
         'class'   => @raw_message.split(' ')[1],
       }
+    elsif @raw_message.respond_to?(:match) &&
+          @raw_message.match(/:\d+:in\s`/)
+      {
+        'message' => @raw_message.lines.first(10).map(&:chomp)
+      }
     else
       {
         'message' => @raw_message,

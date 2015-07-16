@@ -29,12 +29,19 @@ class   Logging
       )
     end
   rescue Exception
+    message = {
+      'error_class'     => e.class.name,
+      'error_message'   => e.message,
+      'error_backtrace' => e.backtrace.first(10),
+    }
+
     logger.info(
       'status'   => 'fail',
       'jid'      => job['jid'],
       'bid'      => job['bid'],
       'run_time' => elapsed(start),
       'class'    => worker.class.to_s,
+      'message'  => message,
       'args'     => filtered_arguments(job['args']),
     )
 
