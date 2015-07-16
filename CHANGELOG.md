@@ -1,3 +1,16 @@
+Version v1.1.0 - July 16, 2015
+================================================================================
+
+Changed
+--------------------------------------------------------------------------------
+  * filtered_arguments so that it works on hashes
+  * Exceptions to always raise the same exception
+  * Failed jobs to return the message and the backtrace
+
+Fixed
+--------------------------------------------------------------------------------
+  * Filtering of deeply nested filtered arguments
+
 Version v1.0.0 - July 8, 2015
 ================================================================================
 
