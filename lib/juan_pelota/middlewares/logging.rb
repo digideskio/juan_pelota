@@ -28,7 +28,7 @@ class   Logging
         'args'     => filtered_arguments(job['args']),
       )
     end
-  rescue Exception
+  rescue Exception => e
     message = {
       'error_class'     => e.class.name,
       'error_message'   => e.message,
@@ -45,7 +45,7 @@ class   Logging
       'args'     => filtered_arguments(job['args']),
     )
 
-    raise
+    raise e
   end
   # rubocop:enable Lint/RescueException, Metrics/AbcSize, Metrics/MethodLength
 
