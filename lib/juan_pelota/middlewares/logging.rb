@@ -12,7 +12,7 @@ class   Logging
         'bid'      => job['bid'],
         'run_time' => nil,
         'class'    => worker.class.to_s,
-        'args'     => filtered_arguments(job['args']),
+        'args'     => filtered_arguments(job['args'].try(:first)),
       )
     end
 
@@ -25,7 +25,7 @@ class   Logging
         'bid'      => job['bid'],
         'run_time' => elapsed(start),
         'class'    => worker.class.to_s,
-        'args'     => filtered_arguments(job['args']),
+        'args'     => filtered_arguments(job['args'].try(:first)),
       )
     end
   rescue Exception => e
@@ -42,7 +42,7 @@ class   Logging
       'run_time' => elapsed(start),
       'class'    => worker.class.to_s,
       'message'  => message,
-      'args'     => filtered_arguments(job['args']),
+      'args'     => filtered_arguments(job['args'].try(:first)),
     )
 
     raise e
@@ -58,11 +58,11 @@ class   Logging
   end
 
   def filtered_arguments(args)
-    return if args.nil? || args.empty?
+    return if args.nil?
 
     @filtered_arguments ||=
-      args.first.each_with_object({}) do |(key, value), filtered_hash|
-        value = filtered_arguments([value]) if value.is_a? Hash
+      args.each_with_object({}) do |(key, value), filtered_hash|
+        value = filtered_arguments(value) if value.is_a? Hash
 
         filtered_hash[key] = value unless config.filtered_arguments.include? key
       end
