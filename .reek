@@ -1,9 +1,22 @@
+###
+# Directory-Based Configurations
+#
+'app/controllers':
+  NestedIterators:
+    max_allowed_nesting:    2
+
+###
+# Global Configurations
+#
 Attribute:
   enabled:                  false
   exclude:
     - 'spec/factories/*.rb'
 
 BooleanParameter:
+  enabled:                  true
+
+ClassVariable:
   enabled:                  true
 
 ControlParameter:
@@ -16,13 +29,16 @@ DataClump:
 
 DuplicateMethodCall:
   enabled:                  true
-  max_calls:                3
+  max_calls:                2
 
 FeatureEnvy:
   enabled:                  true
 
 IrresponsibleModule:
   enabled:                  false
+  exclude:
+    - 'app/helpers'
+    - 'app/controllers'
 
 LongParameterList:
   enabled:                  false
@@ -39,8 +55,9 @@ ModuleInitialize:
   enabled:                  false
 
 NestedIterators:
-  enabled:                  false
+  enabled:                  true
   max_allowed_nesting:      1
+  ignore_iterators:         []
 
 NilCheck:
   enabled:                  true
@@ -65,16 +82,43 @@ TooManyStatements:
   max_statements:           5
 
 UncommunicativeMethodName:
-  enabled:                  true
+  enabled: true
+  exclude: []
+  reject:
+    - !ruby/regexp /^[a-z]$/
+    - !ruby/regexp /[0-9]$/
+    - !ruby/regexp /[A-Z]/
+  accept: []
 
 UncommunicativeModuleName:
-  enabled:                  true
+  enabled: true
+  exclude: []
+  reject:
+    - !ruby/regexp /^.$/
+    - !ruby/regexp /[0-9]$/
+  accept:
+    - Inline::C
+    - !ruby/regexp /^V\d+$/
 
 UncommunicativeParameterName:
-  enabled:                  true
+  enabled: true
+  exclude: []
+  reject:
+    - !ruby/regexp /^.$/
+    - !ruby/regexp /[0-9]$/
+    - !ruby/regexp /[A-Z]/
+    - !ruby/regexp /^_/
+  accept: []
 
 UncommunicativeVariableName:
-  enabled:                  true
+  enabled: true
+  exclude: []
+  reject:
+    - !ruby/regexp /^.$/
+    - !ruby/regexp /[0-9]$/
+    - !ruby/regexp /[A-Z]/
+  accept:
+    - _
 
 UnusedParameters:
   enabled:                  false
@@ -82,3 +126,5 @@ UnusedParameters:
 UtilityFunction:
   enabled:                  true
   max_helper_calls:         1
+  exclude:
+    - 'app/helpers'
