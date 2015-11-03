@@ -30,7 +30,7 @@ PreCommit:
     enabled:                  true
 
   Brakeman:
-    enabled:                  false
+    enabled:                  true
 
   BrokenSymlinks:
     enabled:                  true
@@ -64,6 +64,9 @@ PreCommit:
 
   HardTabs:
     enabled:                  true
+    exclude:
+      - '**/*.svg'
+      - '**/structure.sql'
 
   HtmlTidy:
     enabled:                  false
@@ -140,6 +143,16 @@ PreCommit:
 
   ShellCheck:
     enabled:                  true
+    flags:
+      - '--format=gcc'
+      - '-e SC2155'
+    include:
+      - '**/*.sh'
+      - '**/*.bash'
+      - '**/*.zsh'
+      - '**/bash_profile'
+      - '**/bashrc'
+      - '**/zshrc'
 
   SlimLint:
     enabled:                  false
