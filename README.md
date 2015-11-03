@@ -1,28 +1,7 @@
-# JuanPelota
+# Juan Pelota
 
-At [Springest](http://www.springest.com), we use
-[Logstash](http://logstash.net/) to ship all our logs to
-[Elasticsearch](http://www.elasticsearch.org/). An Elasticsearch index
-consists of JSON documents. To make it possible to make fine grained
-queries on [Sidekiq](http://sidekiq.org/) logs, we needed logging in
-JSON format. This gem contains that logger.
-
-### Example log entry:
-
-```json
-{
-  "@timestamp": "2014-06-05T12:38:42Z",
-  "pid": 8630,
-  "tid": "TID-osammcf2k",
-  "context": "TrainingIndexer::Work JID-177066e96052c2314dcad8c7",
-  "severity": "INFO",
-  "program_name": "TrainingIndexer::Work",
-  "type": "sidekiq",
-  "message": "2014-06-05T12:38:42Z 8630 TID-osammcf2k TrainingIndexer::Work JID-177066e96052c2314dcad8c7 INFO: done: 51.579 sec",
-  "status": "done",
-  "run_time": 51.579
-}
-```
+Named after Lance Armstrong's coffee shop [Juan Pelota](http://www.juanpelotacafe.com/)
+in Austin, TX.
 
 ## Installation
 
