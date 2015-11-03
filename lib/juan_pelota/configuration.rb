@@ -14,5 +14,13 @@ module  JuanPelota
 
     attr_accessor :filtered_arguments,
                   :filtered_workers
+
+    def filtered_arguments
+      @filtered_arguments || []
+    end
+
+    def filtered_workers
+      @filtered_workers || []
+    end
   end
 end
