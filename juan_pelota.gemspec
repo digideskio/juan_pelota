@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.files         = Dir['{app,config,db,lib}/**/*'] + %w{Rakefile README.md LICENSE}
   spec.test_files    = Dir['{test,spec,features}/**/*']
 
-  spec.add_runtime_dependency     'sidekiq',                    ["~> 3.0"]
+  spec.add_runtime_dependency     'sidekiq',                    ["~> 4.0"]
 
   spec.add_development_dependency 'rspec',                      ["~> 3.1"]
   spec.add_development_dependency 'rspectacular',               ["~> 0.58.0"]
