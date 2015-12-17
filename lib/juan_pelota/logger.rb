@@ -4,14 +4,13 @@ require 'json'
 
 module  JuanPelota
 class   Logger < Sidekiq::Logging::Pretty
-  IGNORABLE_STATUSES = %w{start done queueing}
+  IGNORABLE_STATUSES = %w{start done queueing}.freeze
 
   attr_accessor :severity,
                 :timestamp,
                 :program_name,
                 :raw_message
 
-  # rubocop:disable Metrics/AbcSize
   def call(severity, time, program_name, incoming_message)
     self.severity     = severity
     self.timestamp    = time.utc.iso8601
@@ -38,7 +37,6 @@ class   Logger < Sidekiq::Logging::Pretty
       },
     }.to_json + "\n"
   end
-  # rubocop:enable Metrics/AbcSize
 
   private
 
@@ -55,11 +53,11 @@ class   Logger < Sidekiq::Logging::Pretty
     elsif @raw_message.respond_to?(:match) &&
           @raw_message.match(/:\d+:in\s`/)
       {
-        'message' => @raw_message.lines.first(10).map(&:chomp),
+        'message' => @raw_message.lines.first(10).map(&:chomp)
       }
     else
       {
-        'message' => @raw_message,
+        'message' => @raw_message
       }
     end
   end

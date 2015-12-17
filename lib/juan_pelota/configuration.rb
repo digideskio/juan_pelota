@@ -9,7 +9,7 @@ module  JuanPelota
     end
   end
 
-  class   Configuration
+  class Configuration
     include Singleton
 
     attr_accessor :filtered_arguments,
