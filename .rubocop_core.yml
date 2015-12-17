@@ -83,7 +83,7 @@ Style/BlockEndNewline:
 
 Style/BlockDelimiters:
   Enabled:                       true
-  EnforcedStyle:                 'line_count_based'
+  EnforcedStyle:                 'braces_for_chaining'
   Exclude:
     - 'app/controllers/**/*.rb'
 
@@ -242,6 +242,18 @@ Style/FileName:
     - '**/Podfile'
     - '**/Thorfile'
 
+Style/FirstArrayElementLineBreak:
+  Enabled:                       true
+
+Style/FirstHashElementLineBreak:
+  Enabled:                       true
+
+Style/FirstMethodArgumentLineBreak:
+  Enabled:                       false
+
+Style/FirstMethodParameterLineBreak:
+  Enabled:                       false
+
 Style/FirstParameterIndentation:
   Enabled:                       false
   EnforcedStyle:                 'consistent'
@@ -366,6 +378,9 @@ Style/NegatedWhile:
 Style/NestedTernaryOperator:
   Enabled:                       true
 
+Style/NestedModifier:
+  Enabled:                       true
+
 Style/Next:
   Enabled:                       true
   EnforcedStyle:                 'skip_modifier_ifs'
@@ -444,6 +459,8 @@ Style/PredicateName:
     - 'is_'
     - 'was_'
     - 'have_'
+  NameWhitelist:
+    - 'is_a?'
 
 Style/Proc:
   Enabled:                       true
@@ -489,7 +506,7 @@ Style/Semicolon:
 Style/Send:
   Enabled:                       true
   Exclude:
-    - 'spec/**/*_spec.rb'
+    - '**/spec/**/*_spec.rb'
 
 Style/SignalException:
   Enabled:                       true
@@ -588,6 +605,10 @@ Style/SpaceInsideStringInterpolation:
 Style/SpecialGlobalVars:
   Enabled:                       true
 
+Style/StabbyLambdaParentheses:
+  Enabled:                       true
+  EnforcedStyle:                 'require_parentheses'
+
 Style/StringLiterals:
   Enabled:                       true
   EnforcedStyle:                 'single_quotes'
@@ -633,6 +654,7 @@ Style/TrailingWhitespace:
 
 Style/TrailingUnderscoreVariable:
   Enabled:                       true
+  AllowNamedUnderscoreVariables: true
 
 Style/TrivialAccessors:
   Enabled:                       true
@@ -685,14 +707,14 @@ Metrics/ClassLength:
   CountComments:                 false
   Max:                           200
   Exclude:
-    - 'spec/**/*_spec.rb'
+    - '**/spec/**/*_spec.rb'
 
 Metrics/ModuleLength:
   Enabled:                       true
   CountComments:                 false
   Max:                           200
   Exclude:
-    - 'spec/**/*_spec.rb'
+    - '**/spec/**/*_spec.rb'
 
 Metrics/CyclomaticComplexity:
   Enabled:                       true
@@ -841,9 +863,12 @@ Lint/UnneededDisable:
 
 Lint/UnusedBlockArgument:
   Enabled:                       true
+  IgnoreEmptyBlocks:             true
 
 Lint/UnusedMethodArgument:
   Enabled:                       true
+  AllowUnusedKeywordArguments:   true
+  IgnoreEmptyMethods:            true
 
 Lint/UnreachableCode:
   Enabled:                       true
@@ -877,6 +902,9 @@ Performance/Count:
   Enabled:                       true
 
 Performance/Detect:
+  Enabled:                       true
+
+Performance/FixedSize:
   Enabled:                       true
 
 Performance/FlatMap:
